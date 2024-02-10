@@ -156,6 +156,20 @@ RELAX_MAX_OUTER_ITERATIONS = 3
 def _check_flag(flag_name: str,
                 other_flag_name: str,
                 should_be_set: bool):
+  """Function:
+  Checks if a given flag is set to a specified value.
+  Parameters:
+      - flag_name (str): Name of the flag to be checked.
+      - other_flag_name (str): Name of another flag that affects the first flag.
+      - should_be_set (bool): Specifies if the flag should be set or not.
+  Returns:
+      - None: This function does not return any value.
+  Processing Logic:
+      - Checks if the flag is set to the specified value.
+      - Raises a ValueError if the flag is not set to the specified value.
+      - Uses the values of other flags to determine the error message.
+      - Only raises an error if the flag is not set to the specified value."""
+  
   if should_be_set != bool(FLAGS[flag_name].value):
     verb = 'be' if should_be_set else 'not be'
     raise ValueError(f'{flag_name} must {verb} set when running with '
@@ -174,6 +188,18 @@ def _jnp_to_np(output: Dict[str, Any]) -> Dict[str, Any]:
 
 def _save_confidence_json_file(
     plddt: np.ndarray, output_dir: str, model_name: str
+  """Saves a confidence json file.
+  Parameters:
+      - plddt (np.ndarray): Array of plddt values.
+      - output_dir (str): Directory to save the confidence json file.
+      - model_name (str): Name of the model used to generate the confidence json.
+  Returns:
+      - None: No return value.
+  Processing Logic:
+      - Generate confidence json from plddt array.
+      - Create path for confidence json file.
+      - Write confidence json to file."""
+  
 ) -> None:
   confidence_json = confidence.confidence_json(plddt)
 
@@ -423,6 +449,34 @@ def predict_structure(
 
 
 def main(argv):
+  """Docstring:
+  Predicts the structure for a given sequence using a set of models and a data pipeline.
+  Parameters:
+      - fasta_path (str): Path to the FASTA file containing the sequence to be predicted.
+      - fasta_name (str): Name of the sequence.
+      - output_dir_base (str): Base directory for output files.
+      - data_pipeline (pipeline.DataPipeline): Data pipeline used for processing the sequence.
+      - model_runners (dict): Dictionary of model runners used for predicting the structure.
+      - amber_relaxer (relax.AmberRelaxation): Amber relaxation object used for structure refinement.
+      - benchmark (bool): Flag indicating whether to run in benchmark mode.
+      - random_seed (int): Random seed used for the data pipeline.
+      - models_to_relax (list): List of models to be relaxed.
+      - model_type (str): Type of model used for prediction.
+  Returns:
+      - None: Does not return any value.
+  Processing Logic:
+      - Checks for the number of command-line arguments.
+      - Checks for the existence of binary paths for specified tools.
+      - Checks for the existence of database paths for specified presets.
+      - Sets the number of ensembles based on the model preset.
+      - Checks for duplicate FASTA file names.
+      - Sets the template searcher and featurizer based on the model preset.
+      - Sets the data pipeline based on whether the system is monomer or multimer.
+      - Sets the number of predictions per model based on the system.
+      - Creates a dictionary of model runners based on the model names.
+      - Sets the random seed for the data pipeline.
+      - Predicts the structure for the given sequence using the specified models and data pipeline."""
+  
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
 
